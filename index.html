@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>a.bratescu</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,700;1,300&family=Archivo+Narrow:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --black: #141414;
+    --mid: #888580;
+    --light: #e0ddd6;
+    --sidebar-w: 280px;
+    --content-w: 620px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Archivo Narrow', sans-serif;
+    font-weight: 400;
+    background: var(--bg);
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  .page {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── MAIN SCROLL AREA ── */
+  .scroll-area {
+    flex: 1;
+    padding-right: var(--sidebar-w);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 3rem;
+  }
+
+  /* ── SITE HEADER ── */
+  .site-header {
+    width: 100%;
+    max-width: var(--content-w);
+    padding: 2rem 0 1.5rem;
+    border-bottom: 1px solid var(--light);
+  }
+
+  .site-header h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    color: var(--black);
+    margin-bottom: 0.3rem;
+  }
+
+  .site-header h1 span {
+    font-weight: 700;
+  }
+
+  .site-header p {
+    font-size: 0.75rem;
+    color: var(--mid);
+    letter-spacing: 0.03em;
+  }
+
+  .site-subtitle {
+    font-size: 0.72rem;
+    font-weight: 300;
+    color: var(--mid);
+    margin-top: 0.3rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── PROJECT ENTRY ── */
+  .project {
+    width: var(--content-w);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--light);
+  }
+
+  .project-image {
+    width: 100%;
+    aspect-ratio: 16/7;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background: var(--light);
+    cursor: pointer;
+  }
+
+  .project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+
+  .project-image:hover img { transform: scale(1.02); }
+  .project-image svg { width: 100%; height: 100%; }
+
+  .project-title {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 1.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.05;
+    margin-bottom: 1.2rem;
+    color: var(--black);
+  }
+
+  .project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .meta-row {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .meta-row strong {
+    font-weight: 700;
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    margin-right: 0.35rem;
+  }
+
+  .meta-row span { color: var(--mid); }
+
+  /* ── ACCORDION ── */
+  .project-image {
+    cursor: pointer;
+  }
+
+  /* ── PROJECT OPEN LAYOUT ── */
+  .project-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .project.open {
+    width: calc(100vw - var(--sidebar-w) - 6rem);
+  }
+
+  .project.open .project-body {
+    grid-template-columns: 280px 1fr 160px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .project-left {
+    min-width: 0;
+  }
+
+  .project-center {
+    min-width: 0;
+  }
+
+  .project-right {
+    min-width: 0;
+    overflow: hidden;
+    padding-top: 0;
+  }
+
+  .project-right .project-details {
+    padding-top: 0;
+  }
+
+  .project-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.6s ease;
+  }
+
+  .project.open .project-details {
+    max-height: 15000px;
+  }
+
+  /* ── SLIDER ── */
+  .project-gallery {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .slider-track {
+    display: flex;
+    transition: transform 0.45s ease;
+  }
+
+  .slider-track img {
+    min-width: 100%;
+    width: 100%;
+    max-height: 60vh;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .slider-track img.drawing {
+    background: #f0ede8;
+    border: 0.5px solid var(--light);
+    padding: 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .slider-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+  }
+
+  .slider-arrows {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .slider-btn {
+    background: none;
+    border: 0.5px solid var(--light);
+    color: var(--black);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    font-family: 'Archivo Narrow', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .slider-btn:hover {
+    border-color: var(--black);
+  }
+
+  .slider-counter {
+    font-size: 0.68rem;
+    color: var(--mid);
+    letter-spacing: 0.1em;
+  }
+
+  .project-description {
+    font-size: 0.82rem;
+    line-height: 1.9;
+    color: var(--mid);
+    text-align: justify;
+    hyphens: auto;
+    padding-top: 0.5rem;
+    width: 100%;
+  }
+
+  .accordion-hint {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-top: 0.6rem;
+    transition: color 0.2s;
+  }
+
+  .project-image:hover + .project-title + .project-meta + .accordion-hint,
+  .accordion-hint:hover {
+    color: var(--mid);
+  }
+
+  /* ── FIXED SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 4rem 2.2rem;
+    border-left: 1px solid var(--light);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto;
+  }
+
+  .sidebar-name {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: var(--black);
+    margin-bottom: 0.15rem;
+  }
+
+  .sidebar-name span {
+    font-weight: 700;
+  }
+
+  .sidebar-bio {
+    font-size: 0.88rem;
+    line-height: 1.85;
+    color: #aaa9a6;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--light);
+    flex-shrink: 0;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .sidebar-nav li a {
+    font-size: 0.76rem;
+    color: var(--mid);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    padding: 0.2rem 0;
+    display: block;
+    transition: color 0.15s;
+  }
+
+  .sidebar-nav li a:hover { color: var(--black); }
+
+  .sidebar-contact {
+    margin-top: auto;
+    font-size: 0.73rem;
+    line-height: 2.1;
+    color: var(--mid);
+  }
+
+  .sidebar-contact strong {
+    font-weight: 700;
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    margin-right: 0.3rem;
+  }
+
+  .sidebar-contact a {
+    color: var(--mid);
+    text-decoration: none;
+  }
+
+  .sidebar-contact a:hover { color: var(--black); }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    width: 100%;
+    max-width: var(--content-w);
+    padding: 3rem 0 4rem;
+    font-size: 0.7rem;
+    color: var(--mid);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    .scroll-area { padding-right: 0; }
+    .scroll-area > * { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .sidebar {
+      position: relative;
+      width: 100%;
+      min-height: unset;
+      border-left: none;
+      border-top: 1px solid var(--light);
+      padding: 2.5rem 1.5rem;
+      gap: 1.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="scroll-area">
+
+    <header class="site-header">
+      <div style="display: inline-block;">
+        <h1 id="site-title">a.brătescu</h1>
+        <p class="site-subtitle" id="site-subtitle"><span>studio</span><span>de</span><span>arhitectură</span><span>&</span><span>design</span></p>
+      </div>
+    </header>
+
+    <!-- PROJECT 1 -->
+    <article class="project" id="proiect-brasov">
+      <div class="project-body">
+        <div class="project-left">
+          <div class="project-image" onclick="toggleProject('proiect-brasov')">
+            <img src="imagine_coperta.jpeg" alt="Locuințe colective Brașov" />
+          </div>
+          <div class="project-title" onclick="toggleProject('proiect-brasov')" style="cursor:pointer;">— titlu în curs —</div>
+          <div class="project-meta">
+            <div class="meta-row"><strong>Program</strong><span>Locuințe colective</span></div>
+            <div class="meta-row"><strong>Location</strong><span>Brașov, România</span></div>
+            <div class="meta-row"><strong>Status</strong><span>Avizare PUZ</span></div>
+            <div class="meta-row"><strong>Year</strong><span>2026</span></div>
+          </div>
+          <div class="accordion-hint" id="hint-proiect-brasov">↓ detalii proiect</div>
+        </div>
+        <div class="project-center">
+          <div class="project-details">
+            <div class="project-gallery" id="slider-brasov">
+              <div class="slider-track">
+                <img src="proiect1_coperta_veche.jpeg" alt="Perspectivă locuințe colective Brașov" />
+                <img src="proiect1_fatada.png" alt="Fațadă locuințe colective Brașov" />
+                <img src="proiect1_perspectiva.jpeg" alt="Perspectivă laterală locuințe colective Brașov" />
+              </div>
+              <div class="slider-controls">
+                <div class="slider-arrows">
+                  <button class="slider-btn" onclick="slideGallery('slider-brasov', -1)">← prev</button>
+                  <button class="slider-btn" onclick="slideGallery('slider-brasov', 1)">next →</button>
+                </div>
+                <span class="slider-counter" id="counter-slider-brasov">1 / 3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="project-right">
+          <div class="project-details">
+            <p class="project-description">
+              Proiect de locuințe colective situat în Brașov, aflat în faza de avizare PUZ. Volumetria propune o articulare clară între zona rezidențială și parterul activ, cu o fațadă ritmată de vegetație și logii private care mediază relația dintre interior și spațiul urban.
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- PROJECT 2 -->
+    <article class="project" id="proiect-catinei">
+      <div class="project-body">
+        <div class="project-left">
+          <div class="project-image" onclick="toggleProject('proiect-catinei')">
+            <img src="p2_coperta.jpg" alt="Locuință unifamilială strada Cătinei București" style="object-position: center 30%;" />
+          </div>
+          <div class="project-title" onclick="toggleProject('proiect-catinei')" style="cursor:pointer;">— titlu în curs —</div>
+          <div class="project-meta">
+            <div class="meta-row"><strong>Program</strong><span>Locuință unifamilială</span></div>
+            <div class="meta-row"><strong>Location</strong><span>Strada Cătinei, București</span></div>
+            <div class="meta-row"><strong>Status</strong><span>Realizat</span></div>
+            <div class="meta-row"><strong>Year</strong><span>2022</span></div>
+          </div>
+          <div class="accordion-hint" id="hint-proiect-catinei">↓ detalii proiect</div>
+        </div>
+        <div class="project-center">
+          <div class="project-details">
+            <div class="project-gallery" id="slider-catinei">
+              <div class="slider-track">
+                <img src="p2_exterior.jpg" alt="Exterior locuință Cătinei" />
+                <img src="p2_constructie.jpg" alt="Faza de construcție locuință Cătinei" />
+                <img src="p2_strada.jpg" alt="Vedere stradă locuință Cătinei" />
+                <img src="p2_detaliu.jpg" alt="Detaliu fațadă locuință Cătinei" />
+                <img src="p2_parter.jpg" alt="Plan parter locuință Cătinei" class="drawing" />
+                <img src="p2_etaj.jpg" alt="Plan etaj locuință Cătinei" class="drawing" />
+                <img src="p2_sectiune1.jpg" alt="Secțiune 1 locuință Cătinei" class="drawing" />
+                <img src="p2_sectiune2.jpg" alt="Secțiune 2 locuință Cătinei" class="drawing" />
+              </div>
+              <div class="slider-controls">
+                <div class="slider-arrows">
+                  <button class="slider-btn" onclick="slideGallery('slider-catinei', -1)">← prev</button>
+                  <button class="slider-btn" onclick="slideGallery('slider-catinei', 1)">next →</button>
+                </div>
+                <span class="slider-counter" id="counter-slider-catinei">1 / 8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="project-right">
+          <div class="project-details">
+            <p class="project-description">
+              Locuință unifamilială situată pe strada Cătinei din București, finalizată în 2022. Proiectul răspunde unui lot urban îngust prin articularea volumelor și diferențierea materialelor de fațadă — piatră la parter, tencuială albă la etaj — creând o compoziție clară care dialoghează cu scara străzii.
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- PROJECT 3 -->
+    <article class="project" id="proiect-snagov">
+      <div class="project-body">
+        <div class="project-left">
+          <div class="project-image" onclick="toggleProject('proiect-snagov')">
+            <img src="p3_coperta.jpg" alt="Locuință individuală Snagov" />
+          </div>
+          <div class="project-title" onclick="toggleProject('proiect-snagov')" style="cursor:pointer;">— titlu în curs —</div>
+          <div class="project-meta">
+            <div class="meta-row"><strong>Program</strong><span>Locuință individuală</span></div>
+            <div class="meta-row"><strong>Location</strong><span>Snagov, România</span></div>
+            <div class="meta-row"><strong>Status</strong><span>Realizat</span></div>
+            <div class="meta-row"><strong>Year</strong><span>2024</span></div>
+          </div>
+          <div class="accordion-hint" id="hint-proiect-snagov">↓ detalii proiect</div>
+        </div>
+        <div class="project-center">
+          <div class="project-details">
+            <div class="project-gallery" id="slider-snagov">
+              <div class="slider-track">
+                <img src="p3_intrare.jpeg" alt="Intrare locuință Snagov" />
+                <img src="p3_fatada.jpeg" alt="Fațadă locuință Snagov" />
+                <img src="p3_constructie.jpeg" alt="Faza de construcție locuință Snagov" />
+                <img src="p3_baie1.jpeg" alt="Baie locuință Snagov" />
+                <img src="p3_baie2.jpeg" alt="Baie master locuință Snagov" />
+              </div>
+              <div class="slider-controls">
+                <div class="slider-arrows">
+                  <button class="slider-btn" onclick="slideGallery('slider-snagov', -1)">← prev</button>
+                  <button class="slider-btn" onclick="slideGallery('slider-snagov', 1)">next →</button>
+                </div>
+                <span class="slider-counter" id="counter-slider-snagov">1 / 5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="project-right">
+          <div class="project-details">
+            <p class="project-description">
+              Locuință individuală finalizată în 2024, situată în Snagov. Proiectul explorează dialogul dintre materialele naturale — cărămidă aparentă, lemn masiv — și volumetria contemporană, cu un acoperiș în pantă care ancorează construcția în peisajul suburban. Interioarele urmăresc aceeași logică a materialității autentice și a spațiilor bine proporționate.
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <footer class="site-footer">
+      © 2024 Alexandru Brătescu — București, România
+    </footer>
+
+  </div>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-name">Alexandru Brătescu</div>
+      <div style="margin-top: 2rem;">
+      <p class="sidebar-bio">
+        Am absolvit Universitatea de Arhitectură și Urbanism „Ion Mincu" din București în 2020, unde activez în prezent ca asistent universitar. În 2025 mi-am finalizat doctoratul cu o cercetare dedicată spațiului public.
+      </p>
+      <p class="sidebar-bio" style="margin-top: 1rem;">
+        Practica mea profesională pornește de la convingerea că arhitectura bună se construiește prin înțelegerea profundă a contextului — a identității locului, a dinamicilor sociale și a rolului pe care spațiul construit îl joacă în viața comunității. Fiecare proiect este un exercițiu de ascultare: a locului, a oamenilor, a straturilor culturale care dau sens formei.
+      </p>
+      <p class="sidebar-bio" style="margin-top: 1rem;">
+        Mă interesează în mod special spațiul public ca teren de negociere între individ și colectivitate — un spațiu al memoriei, dar și al transformării. Simplitatea formală pe care o urmăresc nu este o estetică, ci o consecință a acestui proces: forma care rămâne după ce tot ce este superflu a fost îndepărtat.
+      </p>
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <ul class="sidebar-nav">
+      <li><a href="#">Arhitectură</a></li>
+      <li><a href="#">Urbanism</a></li>
+      <li><a href="#">Interior</a></li>
+      <li><a href="#">Cercetare</a></li>
+      <li><a href="#">Management de proiect</a></li>
+    </ul>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-contact">
+      <div><strong>mail</strong><a href="mailto:alexandru@bratescu.ro">alexandru@bratescu.ro</a></div>
+      <div><strong>ig</strong><a href="#">@a.bratescu</a></div>
+      <div><strong>ln</strong><a href="#">LinkedIn</a></div>
+    </div>
+  </aside>
+
+</div>
+<script>
+  const sliderState = {};
+
+  function toggleProject(id) {
+    const article = document.getElementById(id);
+    const hint = document.getElementById('hint-' + id);
+    const isOpen = article.classList.contains('open');
+    article.classList.toggle('open');
+    hint.textContent = isOpen ? '↓ detalii proiect' : '↑ închide';
+  }
+
+  function slideGallery(sliderId, dir) {
+    const gallery = document.getElementById(sliderId);
+    const track = gallery.querySelector('.slider-track');
+    const images = track.querySelectorAll('img');
+    const total = images.length;
+    if (!sliderState[sliderId]) sliderState[sliderId] = 0;
+    sliderState[sliderId] = (sliderState[sliderId] + dir + total) % total;
+    track.style.transform = `translateX(-${sliderState[sliderId] * 100}%)`;
+    document.getElementById('counter-' + sliderId).textContent =
+      `${sliderState[sliderId] + 1} / ${total}`;
+  }
+
+  // Aliniază subtitlul exact la lățimea h1
+  window.addEventListener('load', function() {
+    const title = document.getElementById('site-title');
+    const subtitle = document.getElementById('site-subtitle');
+    subtitle.style.width = title.offsetWidth + 'px';
+  });
+</script>
+</body>
+</html>
